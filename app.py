@@ -4,7 +4,7 @@ from client import chat_with_nemotron
 st.set_page_config(page_title="Prompt Review", page_icon="🕵️‍♂️", layout="centered")
 
 st.title("🕵️‍♂️ Prompt Review Tool")
-st.caption("Prompt Review Tool — Powered by Nemotron")
+st.caption("Prompt Review Tool — Powered by Llama 3.3 Nemotron Super 49B v1.5")
 
 SYSTEM_PROMPT = """You are an internal prompt review assistant.
 Your job is to help team members review and improve their AI prompts.
