@@ -205,12 +205,6 @@ Add this to your `claude_desktop_config.json` to use via Claude Desktop:
 
 ---
 
-## 🗓️ Built In
-
-This project was built in **1 week** as an internal prompt tool.
-
----
-
 ## 👤 Author
 
 **Isaac Natarajan**
