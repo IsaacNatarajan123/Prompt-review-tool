@@ -9,7 +9,8 @@ import os
 load_dotenv()
 init_db()
 
-mcp = FastMCP("Prompt review system")
+mcp = FastMCP("Prompt Review Server")
+os.environ["MCP_ALLOW_ALL_ORIGINS"] = "true"
 
 client = OpenAI(
     base_url="https://integrate.api.nvidia.com/v1",
@@ -129,9 +130,11 @@ def get_department_prompts(department: str, min_score: int = 7) -> str:
                    
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
+    app = mcp.sse_app()
     uvicorn.run(
         mcp.sse_app(), 
         host="0.0.0.0", 
         port=port,
-        forwarded_allow_ips="*"
+        forwarded_allow_ips="*",
+        proxy_headers=True
     )
