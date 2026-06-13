@@ -27,7 +27,7 @@ NVIDIA NIM — llama-3.3-nemotron-super-49b-v1.5
         ↓
 MCP Client (client.py)
         ↓
-MCP Server with SSE (server.py)
+MCP Server (Railway) — https://prompt-review-tool-production.up.railway.app/sse
         ↓
 NVIDIA NIM — meta/llama-4-maverick-17b-128e-instruct
 (AI Judge — reviews and improves the prompt)
@@ -115,17 +115,16 @@ NVIDIA_API_KEY=nvapi-your-key-here
 
 ### 5. Run the MCP Server
 ```bash
-python server.py
+The MCP Server is hosted on Railway and runs 24/7.
+No need to run server.py locally.
 ```
-Server runs on `http://127.0.0.1:8000`
+Server URL: https://prompt-review-tool-production.up.railway.app/sse
 
 ### 6. Run the Streamlit UI
-Open a new terminal:
+Run the Streamlit UI locally:
 ```bash
 streamlit run app.py
 ```
-Open `http://localhost:8501` in your browser.
-
 ---
 
 ## 💬 How to Use
