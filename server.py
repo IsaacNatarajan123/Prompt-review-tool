@@ -3,6 +3,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from db.database import init_db, db_path
 import sqlite3
+import uvicorn
 import os
 
 load_dotenv()
@@ -127,4 +128,5 @@ def get_department_prompts(department: str, min_score: int = 7) -> str:
                    
                    
 if __name__ == "__main__":
-    mcp.run(transport="sse")
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(mcp.sse_app(), host="0.0.0.0", port=port)
