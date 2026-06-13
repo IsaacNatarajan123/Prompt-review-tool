@@ -128,5 +128,10 @@ def get_department_prompts(department: str, min_score: int = 7) -> str:
                    
                    
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(mcp.sse_app(), host="0.0.0.0", port=port)
+    port = int(os.environ.get("PORT", 8080))
+    uvicorn.run(
+        mcp.sse_app(), 
+        host="0.0.0.0", 
+        port=port,
+        forwarded_allow_ips="*"
+    )
