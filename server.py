@@ -1,4 +1,5 @@
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 from openai import OpenAI
 from dotenv import load_dotenv
 from db.database import init_db, db_path
@@ -9,7 +10,20 @@ import os
 load_dotenv()
 init_db()
 
-mcp = FastMCP("Prompt Review Server")
+mcp = FastMCP("Prompt Review Server",
+              transport_security=TransportSecuritySettings(
+                  enable_dns_rebinding_protection=True,
+                  allowed_hosts=[
+                      "localhost:*",
+                      "127.0.0.1:*",
+                      "prompt-review-tool-production.up.railway.app"
+                  ],
+                  allowed_origins=[
+                      "http://localhost:*",
+                      "https://prompt-review-tool-production.up.railway.app"
+                  ]
+              ))
+
 os.environ["MCP_ALLOW_ALL_ORIGINS"] = "true"
 
 client = OpenAI(
