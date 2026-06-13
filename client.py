@@ -27,14 +27,14 @@ def run_async(coro):
         loop.close()
 
 async def _call_tool(tool_name: str, arguments: dict):
-    async with sse_client("http://127.0.0.1:8000/sse") as (read, write):
+    async with sse_client("https://prompt-review-tool-production.up.railway.app/sse") as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
             result = await session.call_tool(tool_name, arguments)
             return result.content[0].text
 
 async def _get_tools():
-    async with sse_client("http://127.0.0.1:8000/sse") as (read, write):
+    async with sse_client("https://prompt-review-tool-production.up.railway.app/sse") as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
             tools = await session.list_tools()
