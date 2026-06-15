@@ -1,4 +1,4 @@
-# 🔍 Internal Prompt Review MCP Tool
+# 🕵️‍♂️ Internal Prompt Review MCP Tool
 
 An AI-powered internal tool built with MCP (Model Context Protocol) that helps team members review, improve, and log their AI prompts — ensuring consistent quality across all client deliverables.
 
