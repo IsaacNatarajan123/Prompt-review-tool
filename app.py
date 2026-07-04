@@ -40,18 +40,15 @@ if "original_prompt" not in st.session_state:
     st.session_state.original_prompt = None
 
 def extract_name_department(messages):
-    """Extract name and department from conversation history"""
     for msg in reversed(messages):
         if msg["role"] == "user":
             content = msg["content"].lower()
-            # Look for "I am X from Y department" pattern
             match = re.search(r"i am (\w+) from (.+?)(?:department)?$", content)
             if match:
                 return match.group(1).strip(), match.group(2).strip()
     return None, None
 
 def extract_prompt(messages):
-    """Extract the original prompt to review from conversation"""
     for msg in messages:
         if msg["role"] == "user":
             content = msg["content"]
@@ -59,11 +56,9 @@ def extract_prompt(messages):
                 parts = content.split("—")
                 if len(parts) > 1:
                     return parts[-1].strip()
-                # If no dash, return the whole message minus review keywords
                 return content.replace("review this prompt", "").replace("Can you review this prompt", "").strip()
     return None
 
-# Display chat history
 for msg in st.session_state.display_messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
@@ -77,18 +72,14 @@ if user_input := st.chat_input("Type your message here..."):
 
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-
-            # Try to extract name and department from conversation
             name, department = extract_name_department(st.session_state.messages)
             original_prompt = extract_prompt(st.session_state.messages)
 
-            # If we have all 3 and haven't reviewed yet — force review + improve
             if name and department and original_prompt and not st.session_state.reviewed:
                 st.session_state.name = name
                 st.session_state.department = department
                 st.session_state.original_prompt = original_prompt
 
-                # Force call review_prompt
                 with st.spinner("Reviewing your prompt..."):
                     review_result = call_tool("review_prompt", {
                         "prompt": original_prompt,
@@ -96,17 +87,28 @@ if user_input := st.chat_input("Type your message here..."):
                         "department": department
                     })
 
-                # Force call improve_prompt
                 with st.spinner("Improving your prompt..."):
                     improve_result = call_tool("improve_prompt", {
                         "prompt": original_prompt
                     })
 
-                # Build response text
+                # Format review result nicely
+                review_lines = review_result.strip().split("\n")
+                formatted_review = ""
+                for line in review_lines:
+                    if line.startswith("Score:"):
+                        formatted_review += f"**{line}**\n\n"
+                    elif any(line.startswith(x) for x in ["Clarity:", "Specificity:", "Context:", "Output"]):
+                        formatted_review += f"- **{line.split(':')[0]}:** {':'.join(line.split(':')[1:])}\n"
+                    elif line.startswith("Summary:"):
+                        formatted_review += f"\n**{line}**"
+                    else:
+                        formatted_review += f"{line}\n"
+
                 response_text = f"""Here's the full review for your prompt, {name.capitalize()}:
 
 **📊 Review Results**
-{review_result}
+{formatted_review}
 
 ---
 
@@ -120,14 +122,12 @@ Or would you like to **log this** to the database?"""
 
                 st.session_state.reviewed = True
 
-                # Add tool results to message history so Nemotron has context
                 st.session_state.messages.append({
                     "role": "assistant",
                     "content": response_text
                 })
 
             else:
-                # Let Nemotron handle everything else naturally
                 message, tool_results = chat_with_nemotron(st.session_state.messages)
 
                 while tool_results:
@@ -157,7 +157,6 @@ Or would you like to **log this** to the database?"""
 
                 response_text = message.content or ""
 
-                # Reset reviewed flag for new prompt
                 if "review" not in user_input.lower():
                     st.session_state.reviewed = False
 
