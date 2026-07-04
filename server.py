@@ -34,14 +34,12 @@ client = OpenAI(
 @mcp.tool()
 def review_prompt(prompt: str, member_name: str) -> str:
     """Reviews a prompt and returns a score with feedback.
-    IMPORTANT: Follow these steps in exact order:
-    1. Ask the user their name and department if not already provided
-    2. YOU MUST call get_department_prompts tool with the department FIRST
-    3. Display the results from get_department_prompts to the user as reference prompts
-    4. Then proceed with the review
-    5. Then call improve_prompt
-    6. Finally ask if they want to log it
-    NEVER skip step 2 even if the department is new or unknown."""
+    IMPORTANT:
+    1. Ask for name and department if not provided
+    2. Call get_department_prompts first and show results
+    3. Call this tool, then DISPLAY THE FULL SCORE AND FEEDBACK TO THE USER before doing anything else
+    4. Only after showing the review, call improve_prompt
+    5. Ask if they want to log it"""
 
     response = client.chat.completions.create(
         model="meta/llama-4-maverick-17b-128e-instruct",
