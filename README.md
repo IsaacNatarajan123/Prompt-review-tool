@@ -1,7 +1,15 @@
-# 🕵️‍♂️ Prompt Review MCP Server
-### Internal Prompt Tool
+# 🕵️‍♂️ Internal Prompt Review MCP Tool
 
-An AI-powered internal tool built with MCP (Model Context Protocol) that helps team members review, improve, and log their AI prompts — ensuring consistent quality across all client deliverables.
+An AI-powered internal tool built with MCP (Model Context Protocol) that helps team members review, improve, and log their AI prompts ensuring consistent quality across all client deliverables.
+
+---
+
+## 🌐 Live Demo
+
+| Service | URL |
+|---|---|
+| Streamlit UI | https://terrific-fascination-production-162e.up.railway.app |
+| MCP Server | https://prompt-review-tool-production.up.railway.app/sse |
 
 ---
 
@@ -13,21 +21,23 @@ Every team member writes prompts daily. This tool acts as an **AI judge** that:
 - ✅ Gives structured feedback on Clarity, Specificity, Context, and Output Format
 - ✅ Suggests an improved version of the prompt
 - ✅ Fetches high-scoring reference prompts from your department
-- ✅ Logs everything to a local SQLite database for future reference
+- ✅ Logs everything to a database for future reference
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-Streamlit Chat UI (app.py)
+Streamlit Chat UI
+https://terrific-fascination-production-162e.up.railway.app
         ↓
 NVIDIA NIM — llama-3.3-nemotron-super-49b-v1.5
 (Drives the conversation, asks for name/department, decides when to call tools)
         ↓
 MCP Client (client.py)
         ↓
-MCP Server with SSE (server.py)
+MCP Server (Railway) — https://prompt-review-tool-production.up.railway.app/sse
+(Runs 24/7 on the cloud — no local server needed)
         ↓
 NVIDIA NIM — meta/llama-4-maverick-17b-128e-instruct
 (AI Judge — reviews and improves the prompt)
@@ -46,8 +56,9 @@ SQLite Database (db/prompts.db)
 | AI Judge (MCP Tools) | NVIDIA NIM — `meta/llama-4-maverick-17b-128e-instruct` |
 | Client Library | `openai` (OpenAI-compatible) |
 | UI | Streamlit |
-| Database | SQLite (`sqlite3`) |
-| Environment | `python-dotenv` |
+| Database | SQLite |
+| Hosting | Railway |
+| Total Cost | 100% Free |
 
 ---
 
@@ -61,6 +72,7 @@ prompt_review/
 ├── server.py              # MCP server with all 4 tools
 ├── client.py              # MCP client + NVIDIA NIM connection
 ├── app.py                 # Streamlit chat UI
+├── Procfile               # Railway deployment config
 ├── .env                   # API keys (not committed)
 ├── requirements.txt       # Dependencies
 └── README.md
@@ -81,17 +93,27 @@ prompt_review/
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### Option 1 — Use the Live App (Recommended) ✅
+Just open the link in your browser — no setup needed:
+```
+https://terrific-fascination-production-162e.up.railway.app
+```
+
+### Option 2 — Run Locally
+
+#### Prerequisites
 - Python 3.10+
 - NVIDIA NIM API key from [build.nvidia.com](https://build.nvidia.com)
 
-### 1. Clone the Repository
+#### Steps
+
+1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/prompt-review-mcp.git
-cd prompt-review-mcp
+git clone https://github.com/IsaacNatarajan123/Prompt-review-tool.git
+cd Prompt-review-tool
 ```
 
-### 2. Create Virtual Environment
+2. Create Virtual Environment
 ```bash
 python -m venv venv
 
@@ -102,36 +124,29 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-### 3. Install Dependencies
+3. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Set Up Environment Variables
-Create a `.env` file in the root directory:
+4. Set Up Environment Variables
 ```
 NVIDIA_API_KEY=nvapi-your-key-here
 ```
 
-### 5. Run the MCP Server
-```bash
-python server.py
-```
-Server runs on `http://127.0.0.1:8000`
-
-### 6. Run the Streamlit UI
-Open a new terminal:
+5. Run the Streamlit UI
 ```bash
 streamlit run app.py
 ```
-Open `http://localhost:8501` in your browser.
+
+> **Note:** The MCP Server is already hosted on Railway — no need to run `server.py` locally.
 
 ---
 
 ## 💬 How to Use
 
 1. Open the Streamlit UI in your browser
-2. Type your prompt in the chat — e.g. *"Review this prompt — Write a product roadmap"*
+2. Type your prompt — e.g. *"Review this prompt — Write a product roadmap"*
 3. The AI will ask for your name and department
 4. It fetches high-scoring reference prompts from your department
 5. Reviews your prompt with a score and feedback
@@ -146,10 +161,10 @@ Open `http://localhost:8501` in your browser.
 User sends a message
         ↓
 llama-3.3-nemotron-super-49b-v1.5 (Chat Model)
-Drives the conversation — asks questions, 
+Drives the conversation — asks questions,
 decides which MCP tool to call next
         ↓
-MCP Tool is called
+MCP Tool is called on Railway server
         ↓
 meta/llama-4-maverick-17b-128e-instruct (AI Judge)
 Does the actual prompt review and improvement
@@ -190,7 +205,7 @@ streamlit
 
 ## 🔌 Claude Desktop Integration
 
-Add this to your `claude_desktop_config.json` to use via Claude Desktop:
+Add this to your `claude_desktop_config.json`:
 
 ```json
 {
